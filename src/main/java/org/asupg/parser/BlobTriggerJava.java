@@ -3,7 +3,6 @@ package org.asupg.parser;
 import com.microsoft.azure.functions.annotation.*;
 import com.microsoft.azure.functions.*;
 import org.asupg.parser.service.ExcelParserService;
-import org.asupg.parser.service.impl.ExcelParserServiceImpl;
 
 import java.io.ByteArrayInputStream;
 
@@ -15,7 +14,7 @@ public class BlobTriggerJava {
     private final ExcelParserService excelParserService;
 
     public BlobTriggerJava() {
-        this.excelParserService = new ExcelParserServiceImpl();
+        this.excelParserService = new ExcelParserService();
     }
 
     /**
