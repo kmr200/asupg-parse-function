@@ -5,9 +5,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.asupg.parser.model.TransactionDTO;
 import org.asupg.parser.service.ExcelParserService;
 import org.asupg.parser.util.ConstantsUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -18,10 +18,10 @@ import java.util.HexFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Singleton
 public class ExcelParserServiceImpl implements ExcelParserService {
 
-    @Inject
+    private static final Logger logger = LoggerFactory.getLogger(ExcelParserServiceImpl.class);
+
     public ExcelParserServiceImpl() {}
 
     @Override
@@ -38,7 +38,7 @@ public class ExcelParserServiceImpl implements ExcelParserService {
                 if (!isCreditTransaction(row)) continue;
 
                 TransactionDTO transaction = parseRow(row);
-                System.out.println(transaction);
+                logger.info("Parsed transaction: {}", transaction);
             }
 
         } catch (Exception e) {
@@ -49,7 +49,9 @@ public class ExcelParserServiceImpl implements ExcelParserService {
     private boolean isTransaction(Row row) {
         try {
             parseDate(row.getCell(ConstantsUtil.DATE_COLUMN));
-            return true;
+            Cell docNumCell = row.getCell(ConstantsUtil.DOC_NUM_COLUMN);
+
+            return docNumCell.getStringCellValue() != null && !docNumCell.getStringCellValue().isBlank();
         } catch (Exception e) {
             return false;
         }

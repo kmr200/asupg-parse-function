@@ -3,9 +3,9 @@ package org.asupg.parser;
 import com.microsoft.azure.functions.annotation.*;
 import com.microsoft.azure.functions.*;
 import org.asupg.parser.service.ExcelParserService;
+import org.asupg.parser.service.impl.ExcelParserServiceImpl;
 
-import javax.inject.Inject;
-import java.io.InputStream;
+import java.io.ByteArrayInputStream;
 
 /**
  * Azure Functions with Azure Blob trigger.
@@ -14,9 +14,8 @@ public class BlobTriggerJava {
 
     private final ExcelParserService excelParserService;
 
-    @Inject
-    public BlobTriggerJava(ExcelParserService excelParserService) {
-        this.excelParserService = excelParserService;
+    public BlobTriggerJava() {
+        this.excelParserService = new ExcelParserServiceImpl();
     }
 
     /**
@@ -29,11 +28,17 @@ public class BlobTriggerJava {
                 path = "reports/{name}",
                 dataType = "binary",
                 connection = "AzureWebJobsStorage"
-        ) InputStream content,
+        ) byte[] content,
         @BindingName("name") String name,
         final ExecutionContext context
     ) {
         context.getLogger().info("Parsing file: " + name);
-        excelParserService.parse(content);
+        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(content)) {
+            excelParserService.parse(inputStream);
+            context.getLogger().info("Successfully parsed file: " + name);
+        } catch (Exception e) {
+            context.getLogger().severe("Error parsing file: " + e.getMessage());
+            throw new RuntimeException(e);
+        };
     }
 }
