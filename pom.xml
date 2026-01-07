@@ -15,6 +15,7 @@
         <azure.functions.maven.plugin.version>1.28.0</azure.functions.maven.plugin.version>
         <azure.functions.java.library.version>3.0.0</azure.functions.java.library.version>
         <functionAppName>azure-parse-function-1767614471184</functionAppName>
+        <dagger.version>2.57.2</dagger.version>
     </properties>
 
     <dependencies>
@@ -25,9 +26,16 @@
         </dependency>
 
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.15.2</version>
+            <groupId>com.microsoft.azure.functions</groupId>
+            <artifactId>azure-functions-java-spi</artifactId>
+            <version>1.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.dagger</groupId>
+            <artifactId>dagger</artifactId>
+            <version>${dagger.version}</version>
         </dependency>
 
         <dependency>
@@ -82,6 +90,13 @@
                     <target>${java.version}</target>
                     <release>${java.version}</release>
                     <encoding>${project.build.sourceEncoding}</encoding>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>com.google.dagger</groupId>
+                            <artifactId>dagger-compiler</artifactId>
+                            <version>${dagger.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>

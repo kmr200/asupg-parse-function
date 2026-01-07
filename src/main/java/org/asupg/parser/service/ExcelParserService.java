@@ -7,6 +7,8 @@ import org.asupg.parser.util.ConstantsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -19,14 +21,16 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Singleton
 public class ExcelParserService {
 
     private static final Logger logger = LoggerFactory.getLogger(ExcelParserService.class);
 
     private final CosmosDbService  cosmosDbService;
 
-    public ExcelParserService() {
-        this.cosmosDbService = new CosmosDbService();
+    @Inject
+    public ExcelParserService(CosmosDbService cosmosDbService) {
+        this.cosmosDbService = cosmosDbService;
     }
 
     public void parse(InputStream stream) {

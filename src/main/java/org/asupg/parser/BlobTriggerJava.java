@@ -1,9 +1,12 @@
 package org.asupg.parser;
 
-import com.microsoft.azure.functions.annotation.*;
-import com.microsoft.azure.functions.*;
+import com.microsoft.azure.functions.ExecutionContext;
+import com.microsoft.azure.functions.annotation.BindingName;
+import com.microsoft.azure.functions.annotation.BlobTrigger;
+import com.microsoft.azure.functions.annotation.FunctionName;
 import org.asupg.parser.service.ExcelParserService;
 
+import javax.inject.Inject;
 import java.io.ByteArrayInputStream;
 
 /**
@@ -13,8 +16,9 @@ public class BlobTriggerJava {
 
     private final ExcelParserService excelParserService;
 
-    public BlobTriggerJava() {
-        this.excelParserService = new ExcelParserService();
+    @Inject
+    public BlobTriggerJava(ExcelParserService excelParserService) {
+        this.excelParserService = excelParserService;
     }
 
     /**

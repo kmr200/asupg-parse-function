@@ -8,8 +8,11 @@ import org.asupg.parser.model.TransactionDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.List;
 
+@Singleton
 public class CosmosDbService {
 
     private static final Logger logger = LoggerFactory.getLogger(CosmosDbService.class);
@@ -17,30 +20,10 @@ public class CosmosDbService {
     private final CosmosContainer container;
     private final ObjectMapper objectMapper;
 
-    private static CosmosClient cosmosClient = null;
-    private static final Object lock = new Object();
-
-    public CosmosDbService() {
-        String endpoint = System.getenv("COSMOS_ENDPOINT");
-        String key = System.getenv("COSMOS_KEY");
-        String databaseName = System.getenv("COSMOS_DATABASE_NAME");
-        String containerName = System.getenv("COSMOS_CONTAINER_NAME");
-
-        if (cosmosClient == null) {
-            synchronized (lock) {
-                cosmosClient = new CosmosClientBuilder()
-                        .endpoint(endpoint)
-                        .key(key)
-                        .consistencyLevel(ConsistencyLevel.SESSION)
-                        .contentResponseOnWriteEnabled(false)
-                        .buildClient();
-
-                logger.info("CosmosDB client initialized");
-            }
-        }
-
-        this.container = cosmosClient.getDatabase(databaseName).getContainer(containerName);
-        this.objectMapper = new ObjectMapper();
+    @Inject
+    public CosmosDbService(CosmosContainer container, ObjectMapper objectMapper) {
+        this.container = container;
+        this.objectMapper = objectMapper;
     }
 
     public boolean saveTransactionIfNotExists(TransactionDTO transaction) {
